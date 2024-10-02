@@ -1,40 +1,36 @@
-import { Heart, Search } from "lucide-react";
-
-const FavoriteItem = ({ title }: { title: string }) => (
-  <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded mb-2">
-    <div className="d-flex align-items-center">
-      <div className="bg-secondary rounded me-3" style={{width: '48px', height: '48px'}}></div>
-      <span>{title}</span>
-    </div>
-    <Heart color="purple" size={24} />
-  </div>
-);
-
-const FavoritesPage = () => {
-  return (
-    <div className="container-fluid bg-white min-vh-100 p-4">
-      <h1 className="h2 mb-4">Home Page</h1>
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <div className="position-relative mb-4">
+  'use client';
+  import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+  
+  
+  export default function Home() {
+    const [query, setQuery] = useState<string>('');
+ const router = useRouter();
+  
+    const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      router.push(`/recipes?query=${encodeURIComponent(query)}`);
+    };
+  
+    return (
+      <div className="container mt-5">
+        <h1 className="mb-4">AI-Powered Recipe Finder</h1>
+        <form onSubmit={handleSearch}>
+          <div className="input-group mb-3">
             <input
               type="text"
-              placeholder="What do you want to do or try?"
-              className="form-control form-control-lg rounded-pill pe-5"
+              className="form-control"
+              placeholder="Describe what you want to eat..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
-            <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={24} />
+            <button className="btn btn-primary" type="submit">Search</button>
           </div>
-          <h2 className="h4 mb-3">Favorites</h2>
-          <div>
-            <FavoriteItem title="Medical professions" />
-            <FavoriteItem title="Medical professions" />
-            <FavoriteItem title="Medical professions" />
-            <FavoriteItem title="Medical professions" />
-          </div>
-        </div>
+        </form>
       </div>
-    </div>
-  );
-};
+    );
+  }
+  
 
-export default FavoritesPage;
+
+  
