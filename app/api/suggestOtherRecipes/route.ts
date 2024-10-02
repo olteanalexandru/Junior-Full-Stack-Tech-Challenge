@@ -8,13 +8,13 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    const { query } = await req.json();
+    const { query , avoid } = await req.json();
     
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You are an API that only returns raw JSON data. You never respond with additional text, explanations, or descriptions." },
-        { role: "user", content: `Suggest 5 recipes for: ${query}. Only return a JSON array of objects, each with 'id', 'title', and 'cookingTime' properties. 'cookingTime' should be in exact minutes. Do not include any other text or explanations, only the JSON.` }
+        { role: "user", content: `Suggest 5 recipes for: ${query}.Do not include the recipes ${avoid}. Only return a JSON array of objects, each with 'id', 'title', and 'cookingTime' properties. 'cookingTime' should be in exact minutes. Do not include any other text or explanations, only the JSON.` }
       ],
     });
 
@@ -40,5 +40,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Error fetching recipes'  }, { status: 500 });
   }
 }
-
-
