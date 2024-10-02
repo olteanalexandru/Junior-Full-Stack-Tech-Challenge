@@ -1,95 +1,40 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Heart, Search } from "lucide-react";
 
-export default function Home() {
+const FavoriteItem = ({ title }: { title: string }) => (
+  <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded mb-2">
+    <div className="d-flex align-items-center">
+      <div className="bg-secondary rounded me-3" style={{width: '48px', height: '48px'}}></div>
+      <span>{title}</span>
+    </div>
+    <Heart color="purple" size={24} />
+  </div>
+);
+
+const FavoritesPage = () => {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <div className="container-fluid bg-white min-vh-100 p-4">
+      <h1 className="h2 mb-4">Home Page</h1>
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <div className="position-relative mb-4">
+            <input
+              type="text"
+              placeholder="What do you want to do or try?"
+              className="form-control form-control-lg rounded-pill pe-5"
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={24} />
+          </div>
+          <h2 className="h4 mb-3">Favorites</h2>
+          <div>
+            <FavoriteItem title="Medical professions" />
+            <FavoriteItem title="Medical professions" />
+            <FavoriteItem title="Medical professions" />
+            <FavoriteItem title="Medical professions" />
+          </div>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
-}
+};
+
+export default FavoritesPage;
