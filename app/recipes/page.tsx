@@ -1,16 +1,17 @@
 "use client";
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Heart, X } from 'lucide-react';
 import { Recipe } from './../types';
 import Link from 'next/link';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { FavouriteRecipeComponent } from '../Components/Favorites';
 
 export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState("something healthy for dinner");
-  const [favorites, setFavorites] = useState<Recipe[]>([]);
+  const [favorites, setFavorites] = useLocalStorage<Recipe[]>('favorites', []);
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
 
@@ -54,15 +55,6 @@ export default function Recipes() {
     }
   };
 
-  const toggleFavorite = (recipe: Recipe) => {
-    setFavorites((prevFavorites) => {
-      if (prevFavorites.includes(recipe)) {
-        return prevFavorites.filter((fav) => fav !== recipe);
-      } else {
-        return [...prevFavorites, recipe];
-      }
-    });
-  };
 
   if (loading) return <div className="d-flex justify-content-center align-items-center vh-100">Loading...</div>;
 
@@ -71,7 +63,7 @@ export default function Recipes() {
       <div className="mb-4 position-relative">
         <input
           type="text"
-          value={searchQuery}
+          placeholder={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => {
         if (e.key === 'Enter') {
@@ -96,25 +88,27 @@ export default function Recipes() {
             <img src={recipe.imageUrl} alt={recipe.title} className="me-3" style={{ width: '64px', height: '64px', borderRadius: '8px' }} />
             <div className="flex-grow-1">
               <h2 className="h5 mb-1">
-                <Link href={`/recipe/${recipe.title}/${recipe.cookingTime}`} className="text-decoration-none">
+                <Link href={`/recipe/${recipe.title}/${recipe.cookingTime}`} className="text-decoration-none" style={{ color: 'black' }}>
                   {recipe.title}
                 </Link>
               </h2>
-              <p className="text-muted mb-0">{recipe.cookingTime} min.</p>
+              <p className="mb-0">{recipe.cookingTime} min.</p>
             </div>
-            <button className="btn btn-link text-muted" onClick={() => toggleFavorite(recipe)}>
-              <Heart size={24} color={favorites.includes(recipe) ? 'red' : 'gray'} />
-            </button>
+          
+            <FavouriteRecipeComponent recipe={recipe} />
+         
           </div>
         ))}
       </div>
 
-      <button 
-        onClick={() => query && fetchOtherRecipes()}
-        className="btn btn-primary w-100 mt-4"
-      >
-        I don't like these
-      </button>
+      <div className="d-flex justify-content-center">
+        <button 
+          onClick={() => query && fetchOtherRecipes()}
+          className="btn btn-primary w-50 mt-4"
+        >
+          I don't like these
+        </button>
+      </div>
     </div>
   );
 }
