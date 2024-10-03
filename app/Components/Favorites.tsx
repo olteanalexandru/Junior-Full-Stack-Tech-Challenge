@@ -15,7 +15,7 @@ export default function Favorites() {
 
   const removeFavorite = (fav: Recipe) => {
     console.log('Removing favorite:', fav);
-    setFavorites(favorites.filter(item => item.id !== fav.id));
+    setFavorites(favorites.filter((f) => f.title !== fav.title || f.cookingTime !== fav.cookingTime));
   };
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Favorites() {
       <h2 className="mb-4 h2" style={{ fontWeight: 'bold' }}>Favorites</h2>
       <div className="row">
         {favorites.map((fav) => (
-          <div key={fav.id} className="d-flex align-items-center bg-light rounded mb-3" style={{ boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)', paddingLeft: 0 }}>
+          <div key={uuidv4()} className="d-flex align-items-center bg-light rounded mb-3" style={{ boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)', paddingLeft: 0 }}>
             <div style={{ flexShrink: 0 }}>
               <img
                 src={fav.imageUrl}
@@ -63,6 +63,7 @@ export default function Favorites() {
     </div>
   );
 }
+
 interface FavoriteRecipe extends Recipe {
   uniqueId: string;
 }
@@ -79,13 +80,12 @@ export const FavouriteRecipeComponent: React.FC<FavouriteRecipeComponentProps> =
   };
 
   const toggleFavorite = (recipe: Recipe): void => {
-    const uniqueId = generateUniqueId(recipe);
-    const exists = favorites.some((fav) => fav.uniqueId === uniqueId);
+    const exists = favorites.some((fav) => fav.title === recipe.title && fav.cookingTime === recipe.cookingTime);
     
     if (exists) {
-      setFavorites(favorites.filter((fav) => fav.uniqueId !== uniqueId));
+      setFavorites(favorites.filter((fav) => fav.title !== recipe.title || fav.cookingTime !== recipe.cookingTime));
     } else {
-      const newFavorite: FavoriteRecipe = { ...recipe, uniqueId };
+      const newFavorite: FavoriteRecipe = { ...recipe, uniqueId: generateUniqueId(recipe) };
       setFavorites([...favorites, newFavorite]);
     }
   };
@@ -94,7 +94,7 @@ export const FavouriteRecipeComponent: React.FC<FavouriteRecipeComponentProps> =
     console.log("New Favorites: ", favorites);
   }, [favorites]);
 
-  const isFavorite = favorites.some((fav) => fav.uniqueId === generateUniqueId(recipe));
+  const isFavorite = favorites.some((fav) => fav.title == recipe.title && fav.cookingTime == recipe.cookingTime);
 
   return (
     <Heart

@@ -44,7 +44,7 @@ export default function RecipeDetails() {
 
 
 
-    if(!favorites.some((fav) =>  fav.instructions )  && favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime  && fav.instructions ) ){
+    if(!favorites.some((fav) =>  fav.instructions )  && favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime   ) ){
     if (recipe) {
         console.log("Caching rest of recipe")
      //add rest of elements to cache instead of appending new recipe
@@ -108,6 +108,6 @@ export default function RecipeDetails() {
   );
 }
 function generateUniqueId(): string {
-  throw new Error('Function not implemented.');
+  console.log("Generating unique id")
 }
 
