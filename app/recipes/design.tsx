@@ -10,7 +10,6 @@ export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState("something healthy for dinner");
-  const [favorites, setFavorites] = useState<Recipe[]>([]);
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
 
@@ -54,16 +53,6 @@ export default function Recipes() {
     }
   };
 
-  const toggleFavorite = (recipe: Recipe) => {
-    setFavorites((prevFavorites) => {
-      if (prevFavorites.includes(recipe)) {
-        return prevFavorites.filter((fav) => fav !== recipe);
-      } else {
-        return [...prevFavorites, recipe];
-      }
-    });
-  };
-
   if (loading) return <div className="d-flex justify-content-center align-items-center vh-100">Loading...</div>;
 
   return (
@@ -73,11 +62,6 @@ export default function Recipes() {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          fetchRecipes(searchQuery);
-        }
-          }}
           className="form-control pr-5"
         />
         <button 
@@ -93,17 +77,13 @@ export default function Recipes() {
       <div className="row">
         {recipes.map((recipe, index) => (
           <div key={index} className="d-flex align-items-center bg-light p-3 rounded mb-3">
-            <img src={recipe.imageUrl} alt={recipe.title} className="me-3" style={{ width: '64px', height: '64px', borderRadius: '8px' }} />
+            <div className="me-3" style={{ width: '64px', height: '64px', backgroundColor: '#e0e0e0', borderRadius: '8px' }}></div>
             <div className="flex-grow-1">
-              <h2 className="h5 mb-1">
-                <Link href={`/recipe/${recipe.title}/${recipe.cookingTime}`} className="text-decoration-none">
-                  {recipe.title}
-                </Link>
-              </h2>
+              <h2 className="h5 mb-1">{recipe.title}</h2>
               <p className="text-muted mb-0">{recipe.cookingTime} min.</p>
             </div>
-            <button className="btn btn-link text-muted" onClick={() => toggleFavorite(recipe)}>
-              <Heart size={24} color={favorites.includes(recipe) ? 'red' : 'gray'} />
+            <button className="btn btn-link text-muted">
+              <Heart size={24} />
             </button>
           </div>
         ))}
@@ -118,5 +98,3 @@ export default function Recipes() {
     </div>
   );
 }
-
-

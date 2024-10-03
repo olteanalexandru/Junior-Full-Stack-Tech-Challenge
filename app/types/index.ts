@@ -6,4 +6,5 @@ export interface Recipe {
   nutritionInfo?: string;
   cookingTime?: string;
   servingSize?: string;
+  imageUrl?: string;
 }
