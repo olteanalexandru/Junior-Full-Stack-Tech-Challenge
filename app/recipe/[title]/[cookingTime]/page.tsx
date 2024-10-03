@@ -1,16 +1,18 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Recipe } from '../../../types';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import { Recipe , FavoriteRecipe } from '../../../types';
+import { useLocalStorage } from '../../../hooks/useLocalStorage'; // Ensure this hook returns the correct type
 import { FavouriteRecipeComponent } from '../../../Components/Favorites';
 
 export default function RecipeDetails() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const {title, cookingTime } = useParams() as { title: string; cookingTime: string };
-  const [favorites, setFavorites] = useLocalStorage<Recipe[]>('favorites', []);
-
+  const [favorites, setFavorites] = useLocalStorage<FavoriteRecipe[]>(
+    'favorites',
+    []
+  ) as [FavoriteRecipe[], React.Dispatch<React.SetStateAction<FavoriteRecipe[]>>];
   useEffect(() => {
     if (title && cookingTime) {
       const decodedTitle = decodeURIComponent(title);
@@ -38,10 +40,15 @@ export default function RecipeDetails() {
   const normalizeCookingTime = (time: string) => time?.replace(/\D/g, '');
 
   const cacheRestOfRecipe = (recipe : Recipe) => {
-    if(!favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime  && fav.instructions )){
+    console.log("Checking if recipe is already in favorites" )
+
+
+
+    if(!favorites.some((fav) =>  fav.instructions )  && favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime  && fav.instructions ) ){
     if (recipe) {
         console.log("Caching rest of recipe")
-      setFavorites([...favorites, recipe]);
+     //add rest of elements to cache instead of appending new recipe
+    setFavorites([...favorites.filter((fav) => fav.title !== decodeURIComponent(title) && fav.cookingTime !== cookingTime), { ...recipe, uniqueId: generateUniqueId() }]);
     }
 } 
 }
@@ -77,7 +84,7 @@ export default function RecipeDetails() {
           <img src={recipe.imageUrl} alt="Recipe" className="img-fluid mb-4" style={{ width: '20rem', height: 'auto' }} />
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="mb-0">{recipe.title}</h1>
-            <FavouriteRecipeComponent recipe={recipe} />
+            <FavouriteRecipeComponent recipe={recipe} favorites={favorites} setFavorites={setFavorites} />
           </div>
           <p className="text-muted">{recipe.cookingTime} mins</p>
         </div>
@@ -100,3 +107,7 @@ export default function RecipeDetails() {
     </div>
   );
 }
+function generateUniqueId(): string {
+  throw new Error('Function not implemented.');
+}
+
