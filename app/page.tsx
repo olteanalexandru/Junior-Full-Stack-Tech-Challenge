@@ -1,14 +1,11 @@
   'use client';
   import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Recipe } from './types';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import  Favorites  from './Components/Favorites'; 
   
   
   export default function Home() {
     const [query, setQuery] = useState<string>('');
-    const [favorites, setFavorites] = useLocalStorage<Recipe[]>('favorites', []);
 
  const router = useRouter();
    
@@ -54,9 +51,11 @@ import  Favorites  from './Components/Favorites';
         </button>
 
           </div>
+          
         </form>
         <Favorites />
     </div>
+    
   );
 }
   

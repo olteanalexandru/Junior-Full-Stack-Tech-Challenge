@@ -8,3 +8,9 @@ export interface Recipe {
   servingSize?: string;
   imageUrl?: string;
 }
+
+export interface FavoriteRecipe extends Recipe {
+  uniqueId: string;
+}
+
+
