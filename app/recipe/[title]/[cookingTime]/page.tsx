@@ -33,7 +33,7 @@ export default function RecipeDetails() {
       } else {
         console.log('Recipe not found in favorites or not fully cached, fetching details...');
         
-        fetchRecipeDetails(title, cookingTime);
+        fetchRecipeDetails(title, cookingTime, decodedTitle, normalizedCookingTime);
         
       }
     }
@@ -55,7 +55,7 @@ export default function RecipeDetails() {
 } 
 }
 
-  const fetchRecipeDetails = async (title: string, cookingTime: string) => {
+  const fetchRecipeDetails = async (title: string, cookingTime: string, decodedTitle: string, normalizedCookingTime: string) => {
     setLoading(true);
     try {
       // Fetch recipe details if not in favorites
@@ -65,6 +65,15 @@ export default function RecipeDetails() {
         body: JSON.stringify({ title, cookingTime }),
       });
       const data = await response.json();
+
+
+const fav = favorites.find(
+  (fav) =>
+    fav.title === decodedTitle &&
+    fav.cookingTime && fav.cookingTime == normalizedCookingTime 
+);
+console.log("Old id", fav?.id)
+data.recipe.id = fav?.id || data.recipe.id;
       setRecipe(data.recipe);
       cacheRestOfRecipe(data.recipe);
     } catch (error) {
@@ -75,16 +84,8 @@ export default function RecipeDetails() {
     }
   };
 
-
-
-
-  
-
 if (loading) return <RecipeSkeleton />;
-
-
   if (!recipe) return <div className="container mt-5">Recipe not found</div>;
-
   return (
     <div className="container mt-5">
       <div className="row">

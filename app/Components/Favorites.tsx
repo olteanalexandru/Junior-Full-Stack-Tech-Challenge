@@ -28,7 +28,7 @@ export default function Favorites() {
                 src={fav.imageUrl}
                 alt={fav.title}
                 className="me-3"
-                style={{ height: '100%', borderRadius: '8px' }}
+                style={{ height: 'auto', borderRadius: '8px' , maxWidth: '80px', maxHeight: '100px' }}
               />
             </div>
             <div className="flex-grow-1">
