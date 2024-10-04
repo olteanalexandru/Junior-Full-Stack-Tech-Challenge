@@ -1,18 +1,20 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Recipe , FavoriteRecipe } from '../../../types';
-import { useLocalStorage } from '../../../hooks/useLocalStorage'; // Ensure this hook returns the correct type
-import { FavouriteRecipeComponent } from '../../../Components/Favorites';
+import { Recipe } from '../../../types';
+import { useLocalStorage } from '../../../hooks/useLocalStorage'; 
+import  {FavouriteRecipeComponent}  from '../../../Components/Favorites';
+import { RecipeSkeleton } from './RecipeSkeleton';
+
 
 export default function RecipeDetails() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const {title, cookingTime } = useParams() as { title: string; cookingTime: string };
-  const [favorites, setFavorites] = useLocalStorage<FavoriteRecipe[]>(
+  const [favorites, setFavorites] = useLocalStorage<Recipe[]>(
     'favorites',
     []
-  ) as [FavoriteRecipe[], React.Dispatch<React.SetStateAction<FavoriteRecipe[]>>];
+  ) as [Recipe[], React.Dispatch<React.SetStateAction<Recipe[]>>];
   useEffect(() => {
     if (title && cookingTime) {
       const decodedTitle = decodeURIComponent(title);
@@ -29,7 +31,7 @@ export default function RecipeDetails() {
         setLoading(false);
         console.log('Recipe found in favorites:', fav);
       } else {
-        console.log('Recipe not found in favorites, fetching details...');
+        console.log('Recipe not found in favorites or not fully cached, fetching details...');
         
         fetchRecipeDetails(title, cookingTime);
         
@@ -44,12 +46,12 @@ export default function RecipeDetails() {
 
 
 
-    if(!favorites.some((fav) =>  fav.instructions )  && favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime   ) ){
+    if(!favorites.some((fav) =>  fav.instructions )  && favorites.some((fav) => fav.title == decodeURIComponent(title) && fav.cookingTime == cookingTime  ) ){
     if (recipe) {
         console.log("Caching rest of recipe")
      //add rest of elements to cache instead of appending new recipe
-    setFavorites([...favorites.filter((fav) => fav.title !== decodeURIComponent(title) && fav.cookingTime !== cookingTime), { ...recipe, uniqueId: generateUniqueId() }]);
-    }
+    setFavorites([...favorites.filter((fav) => fav.title !== decodeURIComponent(title) && fav.cookingTime !== cookingTime), { ...recipe }]);
+    } 
 } 
 }
 
@@ -74,14 +76,20 @@ export default function RecipeDetails() {
   };
 
 
-  if (loading) return <div className="container mt-5">Loading...</div>;
+
+
+  
+
+if (loading) return <RecipeSkeleton />;
+
+
   if (!recipe) return <div className="container mt-5">Recipe not found</div>;
 
   return (
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6">
-          <img src={recipe.imageUrl} alt="Recipe" className="img-fluid mb-4" style={{ width: '20rem', height: 'auto' }} />
+          <img src={recipe.imageUrlLarge} alt="Recipe" className="img-fluid mb-4" style={{ width: '20rem', height: 'auto' }} />
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1 className="mb-0">{recipe.title}</h1>
             <FavouriteRecipeComponent recipe={recipe} favorites={favorites} setFavorites={setFavorites} />
@@ -107,7 +115,6 @@ export default function RecipeDetails() {
     </div>
   );
 }
-function generateUniqueId(): string {
-  console.log("Generating unique id")
-}
+
+
 

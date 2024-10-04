@@ -7,10 +7,15 @@ export interface Recipe {
   cookingTime?: string;
   servingSize?: string;
   imageUrl?: string;
+  imageUrlLarge?: string;
 }
 
-export interface FavoriteRecipe extends Recipe {
-  uniqueId: string;
+
+export interface FavouriteRecipeComponentProps {
+  recipe: Recipe;
+  favorites: Recipe[];
+  setFavorites: React.Dispatch<React.SetStateAction<Recipe[]>>;
 }
+
 
 

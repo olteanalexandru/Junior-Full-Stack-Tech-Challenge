@@ -13,6 +13,11 @@ export async function POST(req: NextRequest) {
   try {
     const { title, cookingTime, imageUrl } = await req.json();
 
+   
+    const normalisedTitle = title.replace(/[^a-zA-Z0-9\s]/g, '');
+
+    
+
     if (!title || !cookingTime) {
       throw new Error('Missing title or cookingTime in request body');
     }
@@ -21,7 +26,7 @@ export async function POST(req: NextRequest) {
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You are a helpful assistant that provides recipe details." },
-        { role: "user", content: `Provide detailed information for the recipe with title "${title}" and cooking time "${cookingTime}". Include the title, ingredients, and instructions. Return the response as a valid JSON object with the keys: id, title, ingredients, instructions, and cookingTime.` }
+        { role: "user", content: `Provide detailed information for the recipe with title "${normalisedTitle}" and cooking time "${cookingTime}". Include the title, ingredients, and instructions. Return the response as a valid JSON object with the keys: id, title, ingredients, instructions, and cookingTime.` }
       ],
     });
 
@@ -67,6 +72,7 @@ export async function POST(req: NextRequest) {
         });
 
         recipe.imageUrl = response.data.photos[0]?.src?.small || '';
+        recipe.imageUrlLarge = response.data.photos[0]?.src?.large || '';
       } catch (error) {
         console.error(`Error fetching image for ${recipe.title}:`, error);
         recipe.imageUrl = '';

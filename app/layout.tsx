@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import  "bootstrap/dist/css/bootstrap.min.css"
+import { FavoritesProvider } from './context/FavoritesContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,8 +28,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <header className="bg-primary text-white py-1">
+          <div className="container d-flex justify-content-between align-items-center">
+            <h1 className="h6 m-0">
+              <a href="/" className="text-white text-decoration-none">Recipes</a>
+            </h1>
+          </div>
+        </header>
         <div className="container" style={{ maxWidth: "700px", margin: "0 auto" }}>
+        <FavoritesProvider>
           {children}
+        </FavoritesProvider>
         </div>
       </body>
     </html>

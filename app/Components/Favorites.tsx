@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import { Recipe } from '../types';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useFavorites } from '../context/FavoritesContext';
+import { usePathname } from 'next/navigation';
+import {  Recipe, FavouriteRecipeComponentProps } from '../types';
 
 export default function Favorites() {
-  const [favorites, setFavorites] = useLocalStorage<Recipe[]>('favorites', []);
-  const [isMounted, setIsMounted] = useState(false);
+  const { favorites, removeFavorite } = useFavorites();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const removeFavorite = (fav: Recipe) => {
-    console.log('Removing favorite:', fav);
-    setFavorites(favorites.filter((f) => f.title !== fav.title || f.cookingTime !== fav.cookingTime));
-  };
-
-  useEffect(() => {
-    console.log("Favorites: ", favorites);
-  }, [favorites]);
-
-  if (!isMounted) {
-    return <div>Loading...</div>;
+  if (pathname !== '/') {
+    return null;
   }
 
   if (favorites.length < 1) {
@@ -35,13 +22,14 @@ export default function Favorites() {
       <h2 className="mb-4 h2" style={{ fontWeight: 'bold' }}>Favorites</h2>
       <div className="row">
         {favorites.map((fav) => (
-          <div key={uuidv4()} className="d-flex align-items-center bg-light rounded mb-3" style={{ boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)', paddingLeft: 0 }}>
+          <div key={fav.id} className="d-flex align-items-center bg-light rounded mb-3" style={{ boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)', paddingLeft: 0 }}>
             <div style={{ flexShrink: 0 }}>
               <img
                 src={fav.imageUrl}
                 alt={fav.title}
                 className="me-3"
-                style={{ height: '100%', borderRadius: '8px' }} />
+                style={{ height: '100%', borderRadius: '8px' }}
+              />
             </div>
             <div className="flex-grow-1">
               <h2 className="h5 mb-1">
@@ -51,11 +39,11 @@ export default function Favorites() {
               </h2>
               <p className="mb-0">{fav.cookingTime} min.</p>
             </div>
-            <button 
-              className="btn btn-link text-muted" 
+            <button
+              className="btn btn-link text-muted"
               onClick={() => removeFavorite(fav)}
             >
-              <Heart size={24} color="#65558F" fill='#65558F' />
+              <Heart size={24} color="#65558F" fill="#65558F" />
             </button>
           </div>
         ))}
@@ -64,20 +52,10 @@ export default function Favorites() {
   );
 }
 
-interface FavoriteRecipe extends Recipe {
-  uniqueId: string;
-}
 
-interface FavouriteRecipeComponentProps {
-  recipe: Recipe;
-  favorites: FavoriteRecipe[];
-  setFavorites: React.Dispatch<React.SetStateAction<FavoriteRecipe[]>>;
-}
+
 
 export const FavouriteRecipeComponent: React.FC<FavouriteRecipeComponentProps> = ({ recipe, favorites, setFavorites }) => {
-  const generateUniqueId = (recipe: Recipe): string => {
-    return `${recipe.id}-${recipe.title.replace(/\s+/g, '-').toLowerCase()}`;
-  };
 
   const toggleFavorite = (recipe: Recipe): void => {
     const exists = favorites.some((fav) => fav.title === recipe.title && fav.cookingTime === recipe.cookingTime);
@@ -85,7 +63,7 @@ export const FavouriteRecipeComponent: React.FC<FavouriteRecipeComponentProps> =
     if (exists) {
       setFavorites(favorites.filter((fav) => fav.title !== recipe.title || fav.cookingTime !== recipe.cookingTime));
     } else {
-      const newFavorite: FavoriteRecipe = { ...recipe, uniqueId: generateUniqueId(recipe) };
+      const newFavorite: Recipe = { ...recipe };
       setFavorites([...favorites, newFavorite]);
     }
   };
